@@ -1,11 +1,18 @@
 package path
 
 import (
+	"errors"
 	"path"
 	"strings"
 
+	b58 "github.com/ipfs/go-ipfs/Godeps/_workspace/src/github.com/jbenet/go-base58"
+	mh "github.com/ipfs/go-ipfs/Godeps/_workspace/src/github.com/jbenet/go-multihash"
+
 	u "github.com/ipfs/go-ipfs/util"
 )
+
+// ErrBadPath is returned when a given path is incorrectly formatted
+var ErrBadPath = errors.New("invalid ipfs ref path")
 
 // TODO: debate making this a private struct wrapped in a public interface
 // would allow us to control creation, and cache segments.
@@ -18,7 +25,7 @@ func FromString(s string) Path {
 
 // FromKey safely converts a Key type to a Path type
 func FromKey(k u.Key) Path {
-	return Path(k.String())
+	return Path("/ipfs/" + k.String())
 }
 
 func (p Path) Segments() []string {
@@ -35,4 +42,43 @@ func (p Path) Segments() []string {
 
 func (p Path) String() string {
 	return string(p)
+}
+
+func ParsePath(txt string) (Path, error) {
+	kp, err := ParseKeyToPath(txt)
+	if err == nil {
+		return kp, nil
+	}
+	parts := strings.Split(txt, "/")
+	if len(parts) < 3 {
+		return "", ErrBadPath
+	}
+
+	if parts[0] != "" {
+		return "", ErrBadPath
+	}
+
+	if parts[1] != "ipfs" && parts[1] != "ipns" {
+		return "", ErrBadPath
+	}
+
+	_, err = ParseKeyToPath(parts[2])
+	if err != nil {
+		return "", err
+	}
+
+	return Path(txt), nil
+}
+
+func ParseKeyToPath(txt string) (Path, error) {
+	chk := b58.Decode(txt)
+	if len(chk) == 0 {
+		return "", errors.New("not a key")
+	}
+
+	_, err := mh.Cast(chk)
+	if err != nil {
+		return "", err
+	}
+	return FromKey(u.Key(chk)), nil
 }

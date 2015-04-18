@@ -152,6 +152,7 @@ func daemonFunc(req cmds.Request, res cmds.Response) {
 
 	node, err := nb.Build(ctx.Context)
 	if err != nil {
+		log.Error("error from node construction: ", err)
 		res.SetError(err, cmds.ErrNormal)
 		return
 	}
