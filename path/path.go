@@ -45,11 +45,13 @@ func (p Path) String() string {
 }
 
 func ParsePath(txt string) (Path, error) {
-	kp, err := ParseKeyToPath(txt)
-	if err == nil {
-		return kp, nil
-	}
 	parts := strings.Split(txt, "/")
+	if len(parts) == 1 {
+		kp, err := ParseKeyToPath(txt)
+		if err == nil {
+			return kp, nil
+		}
+	}
 	if len(parts) < 3 {
 		return "", ErrBadPath
 	}
@@ -62,7 +64,7 @@ func ParsePath(txt string) (Path, error) {
 		return "", ErrBadPath
 	}
 
-	_, err = ParseKeyToPath(parts[2])
+	_, err := ParseKeyToPath(parts[2])
 	if err != nil {
 		return "", err
 	}
@@ -81,4 +83,9 @@ func ParseKeyToPath(txt string) (Path, error) {
 		return "", err
 	}
 	return FromKey(u.Key(chk)), nil
+}
+
+func (p *Path) IsValid() error {
+	_, err := ParsePath(p.String())
+	return err
 }
