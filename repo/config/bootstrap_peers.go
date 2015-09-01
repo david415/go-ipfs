@@ -25,6 +25,12 @@ var DefaultBootstrapAddresses = []string{
 	"/ip4/104.236.151.122/tcp/4001/ipfs/QmSoLju6m7xTh3DuokvT3886QRYqxAzb1kShaanJgW36yx", // jupiter (to be jupiter.i.ipfs.io)
 }
 
+// DefaultTorOnionBootstrapAddresses are the hardcoded bootstrap addresses
+// for usage of ipfs with Tor onion services.
+//
+// TODO: add entries here
+var DefaultTorOnionBootstrapAddresses = []string{}
+
 // BootstrapPeer is a peer used to bootstrap the network.
 type BootstrapPeer iaddr.IPFSAddr
 

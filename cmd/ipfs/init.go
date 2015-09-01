@@ -29,6 +29,10 @@ var initCmd = &cmds.Command{
 	Options: []cmds.Option{
 		cmds.IntOption("bits", "b", "Number of bits to use in the generated RSA private key (defaults to 4096)"),
 		cmds.BoolOption("force", "f", "Overwrite existing config (if it exists)"),
+		cmds.BoolOption("tor-onion-only", "", "Only use Tor onion services"),
+		cmds.StringOptions("tor-socks", "", "Tor SOCKS port"),
+		cmds.StringOptions("tor-control", "", "Tor control port"),
+		cmds.StringOptions("tor-auth-cookie", "", "Tor authentication cookie file path"),
 
 		// TODO need to decide whether to expose the override as a file or a
 		// directory. That is: should we allow the user to also specify the
